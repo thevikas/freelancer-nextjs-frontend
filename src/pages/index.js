@@ -22,6 +22,7 @@ import StatisticsCard from 'src/views/dashboard/StatisticsCard'
 import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
+import Tasks from '../views/dashboard/Tasks';
 
 const Dashboard = () => {
 
@@ -32,6 +33,52 @@ const Dashboard = () => {
     const [projectsEstData, setProjectsEstData] = useState([]);
     const [projectsMetaData, setProjectsMetaData] = useState([]);
     const [projectsReady, setProjectsReady] = useState(false);
+    const [todayData, setTodayData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const showall = false; // Adjust this based on your actual state or props
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/now/today?showall=${showall ? "1" : "0"}`;
+            console.log("L41 url", url);
+
+            let headers = new Headers();
+
+            headers.append('Content-Type', 'application/json');
+            headers.append('Accept', 'application/json');
+
+            //headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
+            //headers.append('Access-Control-Allow-Credentials', 'true');
+
+            //headers.append('GET', 'POST', 'OPTIONS');
+
+            try {
+                const response = await fetch(url, {
+                    //mode: 'no-cors',
+                    method: 'GET',
+                    headers: headers
+                });
+                const json = await response.json();
+                console.log("L61 keys", json);
+                for (var i = 0; i < json.length; i++) {
+
+                    //if json[i].spent_time_secs==0 then remove this array item
+                    if (json[i].spent_time_secs == 0) {
+                        json.splice(i, 1);
+                        i--;
+                        continue;
+                    }
+
+                    json[i].hours = Math.round(json[i].spent_time_secs / 3600);
+                }
+                setTodayData(json);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []); // Add dependencies here if needed
 
     useEffect(() => {
         const fetchData = async () => {
@@ -145,8 +192,6 @@ const Dashboard = () => {
         fetchMetaData();
     }, [projectsReady]); // Add dependencies here if needed
 
-
-
     return (
         <ApexChartWrapper>
             <Grid container spacing={6}>
@@ -177,6 +222,10 @@ const Dashboard = () => {
                         data={projectsEstData}
                     />
                 </Grid>
+                <Grid item xs={12}>
+                    <Tasks rows={todayData} />
+                </Grid>
+
                 <Grid item xs={12} md={6} lg={4}>
                     <Grid container spacing={6}>
                         <Grid item xs={6}>
@@ -228,9 +277,6 @@ const Dashboard = () => {
                 </Grid>
                 <Grid item xs={12} md={12} lg={8}>
                     <DepositWithdraw />
-                </Grid>
-                <Grid item xs={12}>
-                    <Table />
                 </Grid>
             </Grid>
         </ApexChartWrapper>

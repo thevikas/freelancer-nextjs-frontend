@@ -31,6 +31,8 @@ const BuyNowButton = () => {
     setOpen(false)
   }
 
+  return (<></>);
+
   return (
     <Box
       className='upgrade-to-pro-button mui-fixed'

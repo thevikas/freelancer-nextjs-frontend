@@ -17,7 +17,7 @@ import ReactApexcharts from 'src/@core/components/react-apexcharts'
 
 const WeeklyOverview = (props) => {
 
-    //    console.log("L20 props", props)
+    console.log("L20 props", props)
     // ** Hook
     const theme = useTheme();
 

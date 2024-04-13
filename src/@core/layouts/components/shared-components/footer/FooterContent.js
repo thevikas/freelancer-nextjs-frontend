@@ -5,48 +5,49 @@ import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
 const FooterContent = () => {
-    // ** Var
-    const hidden = useMediaQuery(theme => theme.breakpoints.down('md'))
+  // ** Var
+  const hidden = useMediaQuery(theme => theme.breakpoints.down('md'))
 
-    return (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography sx={{ mr: 2 }}>
-                {`© ${new Date().getFullYear()}, Made with `}
-                <Box component='span' sx={{ color: 'error.main' }}>
-                    ❤️
-                </Box>
-                {` by `}
-                <Link target='_blank' href='https://themeselection.com/'>
-                    ThemeSelection
-                </Link>
-            </Typography>
-            {hidden ? null : (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>
-                    <Link
-                        target='_blank'
-                        href='https://github.com/thevikas/freelancer-nextjs-frontend/blob/main/LICENSE'
-                    >
-                        MIT License
-                    </Link>
-                    <Link target='_blank' href='https://themeselection.com/'>
-                        More Themes
-                    </Link>
-                    <Link
-                        target='_blank'
-                        href='https://github.com/thevikas/freelancer-nextjs-frontend/blob/main/README.md'
-                    >
-                        Documentation
-                    </Link>
-                    <Link
-                        target='_blank'
-                        href='https://github.com/thevikas/freelancer-nextjs-frontend/issues'
-                    >
-                        Support
-                    </Link>
-                </Box>
-            )}
+  return (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Typography sx={{ mr: 2 }}>
+        {`© ${new Date().getFullYear()}, Made with `}
+        <Box component='span' sx={{ color: 'error.main' }}>
+          ❤️
         </Box>
-    )
+        {` by `}
+        <Link target='_blank' href='https://thevikas.com/'>
+          Vikas Yadav
+        </Link>
+      </Typography>
+      {hidden ? null : (
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>
+          {/*
+          <Link
+            target='_blank'
+            href='https://github.com/thevikas/freelancer-nextjs-frontend/blob/main/LICENSE'
+          >
+            MIT License
+          </Link>
+          <Link target='_blank' href='https://themeselection.com/'>
+            More Themes
+          </Link>
+          <Link
+            target='_blank'
+            href='https://github.com/thevikas/freelancer-nextjs-frontend/blob/main/README.md'
+          >
+            Documentation
+          </Link>
+          <Link
+            target='_blank'
+            href='https://github.com/thevikas/freelancer-nextjs-frontend/issues'
+          >
+            Support
+      </Link>*/}
+        </Box>
+      )}
+    </Box>
+  )
 }
 
 export default FooterContent
