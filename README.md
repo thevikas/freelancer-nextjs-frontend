@@ -17,16 +17,16 @@
 </p>
 
 <p align="center">
-   <a href="https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/blob/main/LICENSE">
+   <a href="https://github.com/thevikas/freelancer-nextjs-frontend/blob/main/LICENSE">
       <img src="https://img.shields.io/github/license/themeselection/materio-mui-react-nextjs-admin-template-free" alt="license">
    </a>
-   <a href="https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/releases">
+   <a href="https://github.com/thevikas/freelancer-nextjs-frontend/releases">
       <img src="https://img.shields.io/github/v/release/themeselection/materio-mui-react-nextjs-admin-template-free" alt="GitHub release (latest by date)">
    </a>
-   <a href="https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/issues">
+   <a href="https://github.com/thevikas/freelancer-nextjs-frontend/issues">
       <img src="https://img.shields.io/github/issues/themeselection/materio-mui-react-nextjs-admin-template-free" alt="GitHub open issues">
    </a>
-   <a href="https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/issues?q=is%3Aissue+is%3Aclosed">
+   <a href="https://github.com/thevikas/freelancer-nextjs-frontend/issues?q=is%3Aissue+is%3Aclosed">
       <img src="https://img.shields.io/github/issues-closed/themeselection/materio-mui-react-nextjs-admin-template-free" alt="GitHub closed issues">
    </a>
    <a href="https://twitter.com/Theme_Selection" target="_blank">
