@@ -9,6 +9,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
 import TableContainer from '@mui/material/TableContainer'
+import PropTypes from 'prop-types'
 
 const rows = [
   {
@@ -45,11 +46,13 @@ const Tasks = (props) => {
           </TableHead>
           <TableBody>
             {props.rows.map(row => (
-              <TableRow hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
+              <TableRow
+                onClick={() => props.handleTaskClick(row)}
+                hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
                 <TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography sx={{ fontWeight: 500, fontSize: '0.875rem !important' }}>{row.project}</Typography>
-                    <Typography variant='caption'>{row.task}</Typography>
+                    {/*<Typography variant='caption'>{row.task}</Typography>*/}
                   </Box>
                 </TableCell>
                 <TableCell>{row.task}</TableCell>
@@ -64,3 +67,9 @@ const Tasks = (props) => {
 }
 
 export default Tasks
+
+//prop-types
+Tasks.propTypes = {
+  rows: PropTypes.array.isRequired,
+  handleTaskClick: PropTypes.func.isRequired
+}
