@@ -22,3 +22,13 @@ code:not([class*='language-']):after {
 code[class*='language-'] {
   padding: 0;
 }
+.highlightedRow {
+  color: yellow; /* Yellow foreground color */
+  background-color: #f0f0f0; /* Gray background color */
+}
+
+table#Tasks td.highlightedRow,
+table#Tasks td.highlightedRow p {
+  color: yellow; /* Yellow foreground color */
+  background-color: #525252; /* Gray background color */
+}
