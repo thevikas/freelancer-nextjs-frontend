@@ -28,6 +28,16 @@ import Tasks from '../views/dashboard/Tasks';
 import { Fab } from '@mui/material';
 import Link from 'next/link';
 
+const TomatoIcon = () => (
+    <svg
+        width="50"
+        height="50"
+        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="red" />
+        <path d="M9 4L12 2L15 4" stroke="green" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
 const Dashboard = () => {
 
     const [hoursChartData, setHoursChartData] = useState([]);
@@ -43,6 +53,9 @@ const Dashboard = () => {
     const [showStartTask, setShowStartTask] = useState(false);
     const [activeTask, setActiveTask] = useState(null);
     const [activeRow, setActiveRow] = useState(null);
+    const [pomodoroStatus, setPomodoroStatus] = useState(false);
+    const [pomodoroInterval, setPomodoroInterval] = useState(null);
+    const [pomoTimeLeft, setPomoTimeLeft] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -238,8 +251,53 @@ const Dashboard = () => {
         }
     }
 
+    const handlePomodoro = async () => {
+        const audio = new Audio('/m/mp3/ringtone-126505.mp3');
+        if (!pomodoroStatus) {
+            setPomodoroStatus(true);
+            global.pomodoroTime = 10;
+            //dont set if already set
+            if (!pomodoroInterval)
+                setPomodoroInterval(setInterval(() => {
+                    if (global.pomodoroTime)
+                        global.pomodoroTime -= 1;
+                    const tleft = `${Math.floor(global.pomodoroTime / 60).toString().padStart(2, '0')}:${(global.pomodoroTime % 60).toString().padStart(2, '0')}`;
+                    setPomoTimeLeft(tleft);
+                    console.log("L250", global.pomodoroTime);
+                    if (global.pomodoroTime == 0) {
+                        console.log("L252", global.pomodoroTime);
+                        setPomodoroStatus(false);
+                        global.pomodoroTime = 0;
+                        clearInterval(pomodoroInterval);
+                        audio.play().catch(error => console.log("Audio play error:", error));
+                    }
+                }, 1000));
+        }
+        else {
+            setPomodoroStatus(false);
+            clearInterval(pomodoroInterval);
+            setPomoTimeLeft('00:00');
+            //audio.stop();
+            audio.currentTime = 0;
+            global.pomodoroTime = 0;
+            console.log("L262", global.pomodoroTime);
+        }
+    }
+
     return (
         <ApexChartWrapper>
+
+            <Fab variant="extended" aria-label="start"
+                onClick={() => handlePomodoro()}
+                style={{
+                    position: 'fixed',
+                    bottom: '40px',
+                    right: '250px',
+                }}>
+                <TomatoIcon />
+                &nbsp;{pomoTimeLeft}
+            </Fab>
+
             {showAddTask && <Link href="/cards">
                 <Fab color="primary" aria-label="add" style={{
                     position: 'fixed',
