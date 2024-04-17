@@ -56,52 +56,72 @@ const Dashboard = () => {
     const [pomodoroStatus, setPomodoroStatus] = useState(false);
     const [pomodoroInterval, setPomodoroInterval] = useState(null);
     const [pomoTimeLeft, setPomoTimeLeft] = useState("");
+    const [taskUpdateTimer, setTaskUpdateTimer] = useState(0);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const showall = false; // Adjust this based on your actual state or props
-            const url = `${process.env.NEXT_PUBLIC_API_URL}/now/today?showall=${showall ? "1" : "0"}`;
-            console.log("L41 url", url);
+    const [projectNames, setProjectNames] = useState([]);
 
-            let headers = new Headers();
+    /**
+     * Fetch Data of tasks done today
+     */
+    const fetchData = async () => {
+        const showall = false; // Adjust this based on your actual state or props
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/now/today?showall=${showall ? "1" : "0"}`;
+        console.log("L41 fetchData url", url);
 
-            headers.append('Content-Type', 'application/json');
-            headers.append('Accept', 'application/json');
+        let headers = new Headers();
 
-            headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
-            //headers.append('Access-Control-Allow-Credentials', 'true');
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+        headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
 
-            //headers.append('GET', 'POST', 'OPTIONS');
+        try {
+            const response = await fetch(url, {
+                //mode: 'no-cors',
+                method: 'GET',
+                headers: headers
+            });
+            const json = await response.json();
+            console.log("L61 keys", json);
+            for (var i = 0; i < json.length; i++) {
 
-            try {
-                const response = await fetch(url, {
-                    //mode: 'no-cors',
-                    method: 'GET',
-                    headers: headers
-                });
-                const json = await response.json();
-                console.log("L61 keys", json);
-                for (var i = 0; i < json.length; i++) {
-
-                    //if json[i].spent_time_secs==0 then remove this array item
-                    if (json[i].spent_time_secs == 0) {
-                        json.splice(i, 1);
-                        i--;
-                        continue;
-                    }
-
-                    json[i].hours = Math.round(json[i].spent_time_secs / 3600);
+                //if json[i].spent_time_secs==0 then remove this array item
+                if (json[i].task == 'Pomodoro') {
+                    console.log("L89 found running pomodoro", json[i]);
+                    clearInterval(pomodoroInterval);
+                    setPomodoroStatus(false);
+                    setPomodoroInterval(null);
+                    handlePomodoro(true).then((res) => {
+                        global.pomodoroTime -= json[i].spent_time_secs;
+                        const tleft = `${Math.floor(global.pomodoroTime / 60).toString().padStart(2, '0')}:${(global.pomodoroTime % 60).toString().padStart(2, '0')}`;
+                        setPomoTimeLeft(tleft);
+                        console.log("L94 pomodoroTimeLeft", pomoTimeLeft);
+                    });
                 }
-                setTodayData(json);
+                else if (json[i].spent_time_secs == 0) {
+                    json.splice(i, 1);
+                    i--;
+                    continue;
+                }
 
-            } catch (error) {
-                console.error('Error fetching data:', error);
+                //json[i].hours = Math.round(json[i].spent_time_secs / 3600);
+                const hours = Math.floor(json[i].spent_time_secs / 3600);
+                const minutes = Math.floor((json[i].spent_time_secs - (hours * 3600)) / 60);
+                json[i].hours = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
             }
-        };
+            setTodayData(json);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
+    // Fetch all today's tasks via a timer
+    useEffect(() => {
         fetchData();
-    }, []); // Add dependencies here if needed
+    }, [taskUpdateTimer]); // Add dependencies here if needed
 
+    /**
+     * Get projects statistics for this month
+     */
     useEffect(() => {
         const fetchData = async () => {
             const showall = false; // Adjust this based on your actual state or props
@@ -139,6 +159,7 @@ const Dashboard = () => {
                 setTotalEstIncome(json.summary.EstimatedIncome);
 
                 var pdata = projectNames.map(key => {
+                    setProjectNames([...projectNames, key]);
                     return {
                         progress: parseInt(json[key].Total),
                         imgHeight: 50,
@@ -171,6 +192,9 @@ const Dashboard = () => {
         fetchData();
     }, []); // Add dependencies here if needed
 
+    /**
+     * Get projects meta data like logos, hoourly rate, currency, description, etc
+     */
     useEffect(() => {
         const fetchMetaData = async () => {
             const showall = false; // Adjust this based on your actual state or props
@@ -251,36 +275,76 @@ const Dashboard = () => {
         }
     }
 
-    const handlePomodoro = async () => {
+    /**
+     * Call Pomodoro API to mark the start time
+     */
+    const callPomodoroApi = async () => {
+        // Fire POST API request with row data
+        try {
+            const url = process.env.NEXT_PUBLIC_API_URL + '/now/pomodoro';
+            console.log("L258 url", url);
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            console.log("L258 calling pomodoro api")
+            // Check if request was successful
+            if (response.ok) {
+                // Navigate to the next page
+                setTaskUpdateTimer(taskUpdateTimer + 1); //causes tasks to get updated
+            } else {
+                // Handle error
+                console.error('Error:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    /**
+     * Handle pomodoro timer
+     */
+    const handlePomodoro = async (forceStart) => {
         const audio = new Audio('/m/mp3/ringtone-126505.mp3');
-        if (!pomodoroStatus) {
+        if (forceStart || !pomodoroStatus) {
             setPomodoroStatus(true);
-            global.pomodoroTime = 10;
+            global.pomodoroTime = 60 * 25;
+            callPomodoroApi();
             //dont set if already set
+            console.log("L314 pomodoroInterval", pomodoroInterval);
             if (!pomodoroInterval)
                 setPomodoroInterval(setInterval(() => {
+                    console.log("L317 pomo timer running", global.pomodoroTime);
                     if (global.pomodoroTime)
                         global.pomodoroTime -= 1;
                     const tleft = `${Math.floor(global.pomodoroTime / 60).toString().padStart(2, '0')}:${(global.pomodoroTime % 60).toString().padStart(2, '0')}`;
                     setPomoTimeLeft(tleft);
-                    console.log("L250", global.pomodoroTime);
-                    if (global.pomodoroTime == 0) {
-                        console.log("L252", global.pomodoroTime);
+                    console.log("L250 pomo", global.pomodoroTime);
+                    if (global.pomodoroTime <= 0) {
+                        console.log("L252 pomo", global.pomodoroTime);
                         setPomodoroStatus(false);
                         global.pomodoroTime = 0;
                         clearInterval(pomodoroInterval);
-                        audio.play().catch(error => console.log("Audio play error:", error));
+                        setPomodoroInterval(null);
+                        //audio.play().catch(error => console.log("Audio play error:", error));
+                        //play audio only once
+                        audio.play();
+                        //pause after 10 secs
+                        setTimeout(() => {
+                            audio.pause();
+                        }, 10000);
                     }
                 }, 1000));
         }
         else {
             setPomodoroStatus(false);
+            console.log("L262 pomo all cleared", global.pomodoroTime);
             clearInterval(pomodoroInterval);
+            pomodoroInterval = null;
             setPomoTimeLeft('00:00');
             //audio.stop();
             audio.currentTime = 0;
             global.pomodoroTime = 0;
-            console.log("L262", global.pomodoroTime);
         }
     }
 
@@ -352,6 +416,7 @@ const Dashboard = () => {
                     <Tasks
                         handleTaskClick={handleTaskClick}
                         activeRow={activeRow}
+                        projectNames={projectNames}
                         rows={todayData} />
                 </Grid>
                 <Grid item xs={12}>
