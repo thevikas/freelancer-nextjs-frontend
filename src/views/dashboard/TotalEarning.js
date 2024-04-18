@@ -7,10 +7,12 @@ import IconButton from '@mui/material/IconButton'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import LinearProgress from '@mui/material/LinearProgress'
+import RefreshIcon from '@mui/icons-material/Refresh'
 import PropTypes from 'prop-types'
 // ** Icons Imports
 import MenuUp from 'mdi-material-ui/MenuUp'
 import DotsVertical from 'mdi-material-ui/DotsVertical'
+import { CircularProgress } from '@mui/material';
 
 /*
 const data = [
@@ -44,7 +46,7 @@ const data = [
 ]*/
 
 const TotalEarning = (props) => {
-    console.log("L47 props", props);
+    console.log("L47 refresh... props", props);
 
     const randomSubtitles = [
         'Vuejs, React & HTML',
@@ -58,7 +60,7 @@ const TotalEarning = (props) => {
         if (props.data[i].subtitle === undefined)
             props.data[i].subtitle = randomSubtitles[i % randomSubtitles.length];
     }
-
+    const { isRefreshing, callRefreshApi, title, data, totalIncome, prevIncome } = props;
     //format the number commas
     const totalIncomeInr = '₹' + props.totalIncome.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     const prevIncomeInr = '₹' + props.prevIncome.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -68,8 +70,14 @@ const TotalEarning = (props) => {
                 title={props.title}
                 titleTypographyProps={{ sx: { lineHeight: '1.6 !important', letterSpacing: '0.15px !important' } }}
                 action={
-                    <IconButton size='small' aria-label='settings' className='card-more-options' sx={{ color: 'text.secondary' }}>
-                        <DotsVertical />
+                    <IconButton
+                        size='small'
+                        aria-label='refresh'
+                        className={isRefreshing ? 'card-refresh-button spin' : 'card-refresh-button'}
+                        sx={{ color: 'text.secondary' }}
+                        onClick={callRefreshApi}
+                    >
+                        {isRefreshing ? <CircularProgress size={24} /> : <RefreshIcon />}
                     </IconButton>
                 }
             />
@@ -149,6 +157,7 @@ TotalEarning.propTypes = {
     prevIncome: PropTypes.number,
     data: PropTypes.array,
     title: PropTypes.string,
+    callRefreshApi: PropTypes.func,
     hoursChartData: PropTypes.array
 }
 

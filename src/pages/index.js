@@ -57,7 +57,7 @@ const Dashboard = () => {
     const [pomodoroInterval, setPomodoroInterval] = useState(null);
     const [pomoTimeLeft, setPomoTimeLeft] = useState("");
     const [taskUpdateTimer, setTaskUpdateTimer] = useState(0);
-
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [projectNames, setProjectNames] = useState([]);
 
     /**
@@ -301,6 +301,27 @@ const Dashboard = () => {
         }
     }
 
+    const callRefreshApi = async () => {
+        console.log("L305 calling refresh api");
+        try {
+            const url = process.env.NEXT_PUBLIC_API_URL + '/projects/refresh';
+            console.log("L308 refresh url", url);
+            setIsRefreshing(true);
+            const response = await fetch(url);
+            console.log("L311 calling refresh api")
+            // Check if request was successful
+            setIsRefreshing(false);
+            if (response.ok) {
+                // Navigate to the next page
+            } else {
+                // Handle error
+                console.error('Error:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
     /**
      * Handle pomodoro timer
      */
@@ -397,6 +418,8 @@ const Dashboard = () => {
                 <Grid item xs={12} md={6} lg={4}>
                     <TotalEarning
                         title="Total Income"
+                        isRefreshing={isRefreshing}
+                        callRefreshApi={callRefreshApi}
                         totalIncome={totalIncome}
                         prevIncome={totalIncome - 10000}
                         percentageChange={42}
@@ -406,6 +429,8 @@ const Dashboard = () => {
                 <Grid item xs={12} md={6} lg={4}>
                     <TotalEarning
                         title="Total Estimated"
+                        callRefreshApi={callRefreshApi}
+                        isRefreshing={isRefreshing}
                         totalIncome={totalEstIncome}
                         prevIncome={totalEstIncome - 10000}
                         percentageChange={42}
@@ -415,6 +440,8 @@ const Dashboard = () => {
                 <Grid item xs={12}>
                     <Tasks
                         handleTaskClick={handleTaskClick}
+                        isRefreshing={isRefreshing}
+                        callRefreshApi={callRefreshApi}
                         activeRow={activeRow}
                         projectNames={projectNames}
                         rows={todayData} />
