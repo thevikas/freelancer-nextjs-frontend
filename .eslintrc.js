@@ -24,7 +24,7 @@ module.exports = {
         'react/no-unescaped-entities': 'off',
         'import/no-anonymous-default-export': 'off',
         // add new line above return
-        'newline-before-return': 'error',
+        //'newline-before-return': 'error',
 
         // add new line below import
         'import/newline-after-import': [
