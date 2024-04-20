@@ -63,7 +63,7 @@ const Dashboard = () => {
     /**
      * Fetch Data of tasks done today
      */
-    const fetchData = async () => {
+    async function fetchData() {
         const showall = false; // Adjust this based on your actual state or props
         const url = `${process.env.NEXT_PUBLIC_API_URL}/now/today?showall=${showall ? "1" : "0"}`;
         console.log("L41 fetchData url", url);
@@ -446,9 +446,9 @@ const Dashboard = () => {
                         projectNames={projectNames}
                         rows={todayData} />
                 </Grid>
-                <Grid item xs={12}>
+                {/*<Grid item xs={12}>
                     <Table />
-                </Grid>
+                </Grid>*/}
                 <Grid item xs={12} md={6} lg={4}>
                     <Grid container spacing={6}>
                         <Grid item xs={6}>
