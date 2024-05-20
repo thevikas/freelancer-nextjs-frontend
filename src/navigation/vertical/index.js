@@ -76,6 +76,11 @@ const navigation = () => {
             icon: CreditCardOutline,
             path: '/about'
         },
+        {
+            title: 'Project',
+            icon: HomeOutline,
+            path: '/p'
+        },
 
     ]
 }

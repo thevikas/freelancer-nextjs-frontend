@@ -13,6 +13,7 @@ import PropTypes from 'prop-types'
 import MenuUp from 'mdi-material-ui/MenuUp'
 import DotsVertical from 'mdi-material-ui/DotsVertical'
 import { CircularProgress } from '@mui/material';
+import Link from 'next/link'
 
 /*
 const data = [
@@ -99,6 +100,7 @@ const TotalEarning = (props) => {
                 </Typography>
 
                 {props.data.map((item, index) => {
+                    console.log("L103 item", item);
                     return (
                         <Box
                             key={item.title}
@@ -130,7 +132,9 @@ const TotalEarning = (props) => {
                             >
                                 <Box sx={{ marginRight: 2, display: 'flex', flexDirection: 'column' }}>
                                     <Typography variant='body2' sx={{ mb: 0.5, fontWeight: 600, color: 'text.primary' }}>
-                                        {item.title}
+                                        <Link passHref href={`/p?n=${item.title}`}>
+                                            {item.title}
+                                        </Link>
                                     </Typography>
                                     <Typography variant='caption'>{item.subtitle}</Typography>
                                 </Box>

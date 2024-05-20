@@ -50,7 +50,7 @@ const ProjectsList = (props) => {
 };
 
 const Tasks = (props) => {
-    console.log("L34   props", props)
+    console.log("L34 props", props)
     var clsRow;
     return (
         <Card>
@@ -73,9 +73,7 @@ const Tasks = (props) => {
                                     onClick={() => props.handleTaskClick(row, index)}
                                     hover key={row.name}
                                     className={clsRow}
-                                    sx={{
-                                        '&:last-of-type td, &:last-of-type th': { border: 0 }
-                                    }}>
+                                    sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
                                     <TableCell
                                         className={clsRow}
                                         sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
